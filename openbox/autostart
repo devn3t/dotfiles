@@ -1,0 +1,50 @@
+## ManjaroBox Autostart File
+##
+## 
+##
+## Note that global autostart .desktop files will also be in 
+## /etc/xdg/openbox/autostart. These will include applications
+## such as the Network Manager and Parcellite
+##
+
+## DPMS - Display Power Management Signaling
+## This is disabled by default to prevent auto-actions when
+## the system is idle, such as screen blanking (10 mins) or
+## suspending (1 hour).
+
+if [ ! -d /bootmnt/manjaro ]; then
+    rm ~/.config/autostart/manjaro-welcome.desktop
+fi
+
+## Ensure that obmenu-generator (a pipe menu) is set to the user.
+## Does this for each session (i.e. ease of use for addtional
+## accounts where created.
+
+sed -i "s,_homedir_,${HOME}," ~/.config/obmenu-generator/schema.pl
+sed -i "s,_homedir_,${HOME}," ~/.config/obmenu-generator/config.pl
+
+xset -dpms; xset s off &
+
+## Basic compositing effects
+compton -CGb &
+
+## Background
+nitrogen --restore &
+
+## Panel
+#(sleep 1s && tint2) &
+(sleep 2s && plank) &
+#(sleep 1s && trayer --expand true --transparent true  --alpha 185 --edge bottom --align right --expand true --SetDockType true --widthtype request --margin 100) &
+(sleep 4s && stalonetray --dockapp-mode simple --transparent --icon-size=48 --skip-taskbar --kludges=force_icons_size) &
+## Startup
+(sleep 1s && pnmixer) &
+(sleep 5s && conky -c /home/devnet/.conky/Fold/fold) &
+
+## Optionally enable file manager in daemon mode for automounting
+# (sleep 1s && thunar --daemon) &
+
+## Optionally enable screensaver
+#(sleep 1s && xautolock -time 15 -locker 'xlock -mode blank') &
+
+## Optionally disable touchpad
+#/usr/bin/synclient TouchpadOff=1 &
